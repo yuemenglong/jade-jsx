@@ -38,27 +38,22 @@ function getTargetNode(ast, fn) {
 
 //{src/text, op, next}
 function getChainFromTargetNode(node) {
-    if (node.arguments[0].type !== "Literal") {
-        throw new Error("First Param Must String");
-    }
-    var alternate = ["MemberExpression", "CallExpression"];
-    var chain = { src: node.arguments[0].value };
+    var alternate = ["CallExpression", "MemberExpression"];
+    var chain = {};
     var head = chain;
-    var alt = 0;
-    for (node = node.$parent; //
+    for (var alt = 0; //
         node.type === alternate[alt % 2]; //
         node = node.$parent, alt++) {
-        if (!chain.op) {
+        if (chain.src) {
             chain.op = node.property.name;
-        } else if (node.arguments[0].type === "Literal") {
-            chain.next = { src: node.arguments[0].value };
+            chain.next = {};
             chain = chain.next;
+        } else if (node.arguments[0].type === "Literal") {
+            chain.src = node.arguments[0].value;
         } else if (node.arguments[0].type === "FunctionExpression" &&
             node.arguments[0].body.type === "BlockStatement" &&
             node.arguments[0].body.body[0].type === "ExpressionStatement") {
-            // chain.next = { text: getSrc(node.arguments[0].body) };
-            chain.next = { text: "{" + getSrc(node.arguments[0].body.body[0].expression) + "}" };
-            chain = chain.next;
+            chain.text = "{" + getSrc(node.arguments[0].body.body[0].expression) + "}";
         } else {
             throw new Error("Invalid Arguments Type, " + node.arguments[0].type);
         }
@@ -112,13 +107,8 @@ module.exports = transform;
 
 if (require.main == module) {
 
-    var src = `
-    func(
-    html("div").inner(function (){
-        b;
-    }));
-`;
-    var ast = getAst(src);
+    var src = "html('div')";
+    // var ast = getAst(src);
     // console.log(JSON.stringify(ast, null, "  "));
     // var code = getSrc(ast.body[0].expression);
     // console.log(code);
