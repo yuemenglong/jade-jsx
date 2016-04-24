@@ -105,7 +105,7 @@ function transform(src) {
         var jsx = jadeChainTransform(chain);
         var head = replaceTargetNode(list[i], jsx);
     }
-    return getSrc(ast).slice(0, -1);
+    return getSrc(ast);
 }
 
 module.exports = transform;
