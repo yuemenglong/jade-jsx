@@ -3,7 +3,7 @@ var escodegen = require("escodegen");
 var estraverse = require("estraverse");
 var util = require("util");
 
-var pugChainTransform = require("./pug-chain-transform");
+var jadeChainTransform = require("./jade-chain-transform");
 
 function getSrc(ast) {
     return escodegen.generate(ast);
@@ -56,7 +56,8 @@ function getChainFromTargetNode(node) {
         } else if (node.arguments[0].type === "FunctionExpression" &&
             node.arguments[0].body.type === "BlockStatement" &&
             node.arguments[0].body.body[0].type === "ExpressionStatement") {
-            chain.next = { text: getSrc(node.arguments[0].body.body[0].expression) };
+            // chain.next = { text: getSrc(node.arguments[0].body) };
+            chain.next = { text: "{" + getSrc(node.arguments[0].body.body[0].expression) + "}" };
             chain = chain.next;
         } else {
             throw new Error("Invalid Arguments Type, " + node.arguments[0].type);
@@ -101,7 +102,7 @@ function transform(src) {
     var list = getTargetNode(ast);
     for (var i = 0; i < list.length; i++) {
         var chain = getChainFromTargetNode(list[i]);
-        var jsx = pugChainTransform(chain);
+        var jsx = jadeChainTransform(chain);
         var head = replaceTargetNode(list[i], jsx);
     }
     return getSrc(ast).slice(0, -1);

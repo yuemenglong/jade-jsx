@@ -16,7 +16,6 @@ if (require.main == module) {
     var jsx = jadeTransform(src);
     console.log(jsx);
     var js = jsxTransform(jsx);
-    console.log(js);
     var outFile = process.argv[3];
     if (outFile) {
         fs.writeFileSync(outFile, js);
