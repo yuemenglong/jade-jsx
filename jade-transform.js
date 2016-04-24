@@ -13,8 +13,8 @@ function getAst(src) {
     return esprima.parse(src);
 }
 
-function getTargetNode(ast, mark) {
-    mark = mark || "html";
+function getTargetNode(ast, fn) {
+    fn = fn || "html";
     var result = [];
     var currentStack = [];
     estraverse.replace(ast, {
@@ -24,7 +24,7 @@ function getTargetNode(ast, mark) {
             }
             if (node.type === "CallExpression" &&
                 node.callee.type === "Identifier" &&
-                node.callee.name === mark) {
+                node.callee.name === fn) {
                 result.unshift(node);
             }
             currentStack.unshift(node);
@@ -41,10 +41,13 @@ function getChainFromTargetNode(node) {
     if (node.arguments[0].type !== "Literal") {
         throw new Error("First Param Must String");
     }
+    var alternate = ["MemberExpression", "CallExpression"];
     var chain = { src: node.arguments[0].value };
     var head = chain;
-    node = node.$parent;
-    while (!node.type.match(/.*Statement/)) {
+    var alt = 0;
+    for (node = node.$parent; //
+        node.type === alternate[alt % 2]; //
+        node = node.$parent, alt++) {
         if (!chain.op) {
             chain.op = node.property.name;
         } else if (node.arguments[0].type === "Literal") {
@@ -58,27 +61,39 @@ function getChainFromTargetNode(node) {
         } else {
             throw new Error("Invalid Arguments Type, " + node.arguments[0].type);
         }
-        node = node.$parent;
     }
     return head;
 }
 
 function replaceTargetNode(node, jsx) {
     var stmt = null;
-    var child = null;
-    while (node) {
-        if (node.type.match(/.*Statement/)) {
-            break;
-        }
-        child = node;
-        node = node.$parent;
+    var alternate = ["MemberExpression", "CallExpression"];
+    var alt = 0;
+    for (var child = node, node = node.$parent; //
+        node && node.type === alternate[alt % 2]; // 
+        child = node, node = node.$parent, alt++) {
+        //
     }
     if (!node || !child) {
-        throw new Error("Can't Find Statement On Parent Chain");
+        throw new Error("Can't Find Top Node On Parent Chain");
     }
     child.type = "Identifier";
     child.name = jsx;
     return child;
+}
+
+function print(ast) {
+    var intent = 0;
+    estraverse.replace(ast, {
+        enter: function(node) {
+            console.log(new Array(intent).join("  ") + "<<" + node.type + " " + node.name);
+            intent++;
+        },
+        leave: function(node) {
+            intent--;
+            console.log(new Array(intent).join("  ") + ">>" + node.type);
+        }
+    })
 }
 
 function transform(src) {
@@ -97,11 +112,12 @@ module.exports = transform;
 if (require.main == module) {
 
     var src = `
-    html(function (){
+    func(
+    html("div").inner(function (){
         b;
-    })
+    }));
 `;
-    // var ast = getAst(src);
+    var ast = getAst(src);
     // console.log(JSON.stringify(ast, null, "  "));
     // var code = getSrc(ast.body[0].expression);
     // console.log(code);
