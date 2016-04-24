@@ -38,6 +38,9 @@ function getTargetNode(ast, mark) {
 
 //{src/text, op, next}
 function getChainFromTargetNode(node) {
+    if (node.arguments[0].type !== "Literal") {
+        throw new Error("First Param Must String");
+    }
     var chain = { src: node.arguments[0].value };
     var head = chain;
     node = node.$parent;
@@ -47,8 +50,10 @@ function getChainFromTargetNode(node) {
         } else if (node.arguments[0].type === "Literal") {
             chain.next = { src: node.arguments[0].value };
             chain = chain.next;
-        } else if (node.arguments[0].type === "FunctionExpression") {
-            chain.next = { text: getSrc(node.arguments[0].body) };
+        } else if (node.arguments[0].type === "FunctionExpression" &&
+            node.arguments[0].body.type === "BlockStatement" &&
+            node.arguments[0].body.body[0].type === "ExpressionStatement") {
+            chain.next = { text: getSrc(node.arguments[0].body.body[0].expression) };
             chain = chain.next;
         } else {
             throw new Error("Invalid Arguments Type, " + node.arguments[0].type);
@@ -92,14 +97,15 @@ module.exports = transform;
 if (require.main == module) {
 
     var src = `
-html("h1.a").inner(function(){
-    [].map(function(item){
-        return html("h2");
+    html(function (){
+        b;
     })
-});
 `;
     // var ast = getAst(src);
     // console.log(JSON.stringify(ast, null, "  "));
+    // var code = getSrc(ast.body[0].expression);
+    // console.log(code);
+
     var res = transform(src);
     console.log(res);
 
