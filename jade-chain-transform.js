@@ -1,5 +1,5 @@
 var pug = require("pug");
-var lexer = require("pug-lexer");
+var lexer = require("../pug-lexer");
 var parser = require("pug-parser");
 var loader = require("pug-loader");
 var walk = require("pug-walk");
@@ -195,20 +195,7 @@ function chainTransform(chain) {
 module.exports = chainTransform;
 
 if (require.main == module) {
-    var src = "div.a.b";
+    var src = "div(a=1 b={a})";
     var ast = getAst(src);
     console.log(JSON.stringify(ast, null, "  "));
-    // var chain = {
-    //     "src": "h1",
-    //     "op": "inner",
-    //     "next": {
-    //         "src": "h2",
-    //         "op": "inner",
-    //         "next": {
-    //             "text": "{for(var i = 0; i < 1; i++){}}"
-    //         }
-    //     }
-    // };
-    // var html = chainTransform(chain);
-    // console.log(html);
 }

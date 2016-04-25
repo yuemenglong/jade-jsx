@@ -36,6 +36,22 @@ function getTargetNode(ast, fn) {
     return result;
 }
 
+function trimIndent(raw) {
+    var lines = raw.match(/.+/g);
+    if (!lines || !lines[0]) {
+        throw new Error("Raw Is Empty");
+    }
+    var first = lines[0];
+    var indent = first.match(/\s*/)[0];
+    if (!indent.length) {
+        return raw;
+    }
+    for (var i = 0; i < lines.length; i++) {
+        lines[i] = lines[i].replace(indent, "");
+    }
+    return lines.join("\n");
+}
+
 //{src/text, op, next}
 function getChainFromTargetNode(node) {
     var alternate = ["CallExpression", "MemberExpression"];
@@ -50,6 +66,8 @@ function getChainFromTargetNode(node) {
             chain = chain.next;
         } else if (node.arguments[0].type === "Literal") {
             chain.src = node.arguments[0].value;
+        } else if (node.arguments[0].type === "TemplateLiteral") {
+            chain.src = trimIndent(node.arguments[0].quasis[0].value.raw);
         } else if (node.arguments[0].type === "FunctionExpression" &&
             node.arguments[0].body.type === "BlockStatement" &&
             node.arguments[0].body.body[0].type === "ExpressionStatement") {
@@ -106,8 +124,16 @@ function transform(src) {
 module.exports = transform;
 
 if (require.main == module) {
+    var src = `
+    1
+    2
+    3
+        4
+    `;
+    trimIndent(src);
 
-    var src = "html('div')";
+    var a = 1;
+    var src = "html(`asdfsadf${a}`)";
     // var ast = getAst(src);
     // console.log(JSON.stringify(ast, null, "  "));
     // var code = getSrc(ast.body[0].expression);
