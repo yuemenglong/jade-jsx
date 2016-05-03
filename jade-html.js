@@ -187,12 +187,12 @@ function mergeSrcChain(chain) {
     return mergeNodeChain(head);
 }
 
-function chainTransform(chain) {
+function jadeToHtml(chain) {
     var ast = mergeSrcChain(chain);
     return render(ast);
 }
 
-module.exports = chainTransform;
+module.exports = jadeToHtml;
 
 if (require.main == module) {
     var src = "div(a=1 b={a})";

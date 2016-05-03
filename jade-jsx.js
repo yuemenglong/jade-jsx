@@ -3,7 +3,7 @@ var escodegen = require("escodegen");
 var estraverse = require("estraverse");
 var util = require("util");
 
-var jadeChainTransform = require("./jade-chain-transform");
+var jadeToHtml = require("./jade-html");
 
 function getSrc(ast) {
     return escodegen.generate(ast);
@@ -53,7 +53,7 @@ function trimIndent(raw) {
 }
 
 //{src/text, op, next}
-function getChainFromTargetNode(node) {
+function getJadeAstFromTargetNode(node) {
     var alternate = ["CallExpression", "MemberExpression"];
     var chain = {};
     var head = chain;
@@ -110,18 +110,18 @@ function print(ast) {
     })
 }
 
-function transform(src) {
+function jadeToJsx(src) {
     var ast = getAst(src);
     var list = getTargetNode(ast);
     for (var i = 0; i < list.length; i++) {
-        var chain = getChainFromTargetNode(list[i]);
-        var jsx = jadeChainTransform(chain);
+        var chain = getJadeAstFromTargetNode(list[i]);
+        var jsx = jadeToHtml(chain);
         var head = replaceTargetNode(list[i], jsx);
     }
     return getSrc(ast);
 }
 
-module.exports = transform;
+module.exports = jadeToJsx;
 
 if (require.main == module) {
     var src = `
@@ -139,13 +139,13 @@ if (require.main == module) {
     // var code = getSrc(ast.body[0].expression);
     // console.log(code);
 
-    var res = transform(src);
+    var res = jadeToJsx(src);
     console.log(res);
 
     // var ast = getAst(src);
     // var list = getTargetNode(ast);
-    // var chain = getChainFromTargetNode(list[0]);
-    // var html = pugger.transform(chain);
+    // var chain = getJadeAstFromTargetNode(list[0]);
+    // var html = pugger.jadeToJsx(chain);
 
     // console.log(JSON.stringify(ast, null, "  "));
     // console.log(JSON.stringify(chain, null, "  "));
