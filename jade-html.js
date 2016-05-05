@@ -4,6 +4,7 @@ var parser = require("pug-parser");
 var loader = require("pug-loader");
 var walk = require("pug-walk");
 var gen = require("pug-code-gen");
+var _ = require("lodash");
 
 var util = require("util");
 
@@ -25,8 +26,12 @@ function render(ast) {
         var attrArr = [];
         for (var i in node.attrs) {
             var attr = node.attrs[i];
-            var kv = util.format("%s=%s", attr.name, attr.val);
-            attrArr.push(kv);
+            if (attr.name.match(/^\{\.{3}.+\}$/)) {
+                attrArr.push(attr.name);
+            } else {
+                var kv = util.format("%s=%s", attr.name, attr.val);
+                attrArr.push(kv);
+            }
         }
         var attrStr = attrArr.length ? " " + attrArr.join(" ") : "";
         return util.format("<%s%s>\n", node.name, attrStr);
@@ -130,6 +135,17 @@ function appendChild(ast, node) {
     return newNode;
 }
 
+function debug(node) {
+    console.log("==============================");
+    console.log(JSON.stringify(node, function(key, value) {
+        if (key.slice(0, 1) === "$") {
+            return undefined;
+        }
+        return value;
+    }, "  "));
+    console.log("==============================");
+}
+
 //{node, op, next}
 function mergeNodeChain(chain) {
     if (!chain || !chain.node) {
@@ -138,35 +154,25 @@ function mergeNodeChain(chain) {
     var root = chain.node;
     var level = 1;
     var handleTag = getLast(root, "Tag");
+    var targetTags = [handleTag];
     for (; chain.op; chain = chain.next) {
-        var target = chain.next.node.$child;
+        var addedNode = chain.next.node.$child;
+        if (!addedNode) {
+            throw new Error("Op Must Have Target Node");
+        }
+        var targetTag = null;
         if (chain.op === "inner") {
-            if (!target) {
-                throw new Error("Inner Must Have Node");
-            }
-            handleTag.$child.nodes.push(target);
-            handleTag.$child.$child = target;
-            target.$parent = handleTag.$child;
-            handleTag = getLast(root, "Tag");
+            targetTag = _.nth(targetTags, -1);
         } else if (chain.op === "and") {
-            if (!target) {
-                throw new Error("And Must Have Node");
-            }
-            handleTag.$parent.nodes.push(target);
-            handleTag.$parent.$child = target;
-            target.$parent = handleTag.$parent;
-            handleTag = getLast(root, "Tag");
-        } else if (chain.op === "outer") {
-            //outer can be empty
-            if (!chain.next.node) {
-                handleTag = getParent(handleTag, "Tag");
-                continue;
-            }
-            var parentTag = getParent(handleTag, "Tag");
-            parentTag.$parent.nodes.push(target);
-            parentTag.$parent.$child = target;
-            target.$parent = parentTag.$parent;
-            handleTag = getLast(root, "Tag");
+            targetTag = _.nth(targetTags, -2);
+        } else {
+            throw new Error("Invalid Chain Op Or Src/Text")
+        }
+        targetTag.$child.nodes.push(addedNode);
+        targetTag.$child.$child = addedNode;
+        addedNode.$parent = targetTag.$child;
+        if (chain.src) {
+            targetTags.push(getLast(root, "Tag"));
         }
     }
     return root;
@@ -195,7 +201,17 @@ function jadeToHtml(chain) {
 module.exports = jadeToHtml;
 
 if (require.main == module) {
-    var src = "div(a=1 b={a})";
-    var ast = getAst(src);
-    console.log(JSON.stringify(ast, null, "  "));
+    var chain = {
+        "src": "div",
+        "op": "inner",
+        "next": {
+            "text": "{this.state.lines.map(function (item) {\n    return <line {...item}>\n</line>\n;\n})}",
+            "op": "and",
+            "next": {
+                "text": "{this.state.rects.map(function (item) {\n    return <rect {...item}>\n</rect>\n;\n})}"
+            }
+        }
+    };
+    var html = jadeToHtml(chain);
+    console.log(html);
 }

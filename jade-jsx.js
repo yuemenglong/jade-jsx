@@ -60,7 +60,7 @@ function getJadeAstFromTargetNode(node) {
     for (var alt = 0; //
         node.type === alternate[alt % 2]; //
         node = node.$parent, alt++) {
-        if (chain.src) {
+        if (node.type === "MemberExpression") {
             chain.op = node.property.name;
             chain.next = {};
             chain = chain.next;
@@ -124,30 +124,21 @@ function jadeToJsx(src) {
 module.exports = jadeToJsx;
 
 if (require.main == module) {
-    var src = `
-    1
-    2
-    3
-        4
-    `;
-    trimIndent(src);
-
-    var a = 1;
-    var src = "html(`asdfsadf${a}`)";
+    // var src = `
+    //     html("div").inner(function() {
+    //         this.state.lines.map(function(item) {
+    //             return html("line({...item})");
+    //         })
+    //     }).and(function() {
+    //         this.state.rects.map(function(item) {
+    //             return html("rect({...item})");
+    //         });
+    //     });`
+    var src = `html("a").inner("b").and("c")`;
     // var ast = getAst(src);
-    // console.log(JSON.stringify(ast, null, "  "));
-    // var code = getSrc(ast.body[0].expression);
-    // console.log(code);
-
-    var res = jadeToJsx(src);
-    console.log(res);
-
-    // var ast = getAst(src);
-    // var list = getTargetNode(ast);
-    // var chain = getJadeAstFromTargetNode(list[0]);
-    // var html = pugger.jadeToJsx(chain);
-
-    // console.log(JSON.stringify(ast, null, "  "));
+    // var nodeList = getTargetNode(ast);
+    // var chain = getJadeAstFromTargetNode(nodeList[0]);
     // console.log(JSON.stringify(chain, null, "  "));
-    // console.log(html);
+    var jsx = jadeToJsx(src);
+    console.log(jsx);
 }

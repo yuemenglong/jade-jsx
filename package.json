@@ -14,6 +14,7 @@
     "escodegen": "^1.8.0",
     "esprima": "^2.7.2",
     "estraverse": "^4.2.0",
+    "lodash": "^4.11.2",
     "pug": "^0.1.0"
   },
   "devDependencies": {
