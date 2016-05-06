@@ -1,5 +1,5 @@
 var pug = require("pug");
-var lexer = require("../pug-lexer");
+var lexer = require("yy-pug-lexer");
 var parser = require("pug-parser");
 var loader = require("pug-loader");
 var walk = require("pug-walk");

@@ -1,12 +1,12 @@
 {
-  "name": "react",
+  "name": "jade-jsx",
   "version": "1.0.0",
-  "description": "",
+  "description": "use jade grammar to write jsx",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "yuemenglong@126.com",
   "license": "ISC",
   "dependencies": {
     "babel-core": "^6.7.7",
@@ -15,9 +15,26 @@
     "esprima": "^2.7.2",
     "estraverse": "^4.2.0",
     "lodash": "^4.11.2",
-    "pug": "^0.1.0"
+    "pug": "^0.1.0",
+    "yy-pug-lexer": "^1.0.1"
   },
   "devDependencies": {
     "should": "^8.3.1"
-  }
+  },
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yuemenglong/jade-jsx.git"
+  },
+  "keywords": [
+    "jade",
+    "jsx",
+    "transform"
+  ],
+  "bugs": {
+    "url": "https://github.com/yuemenglong/jade-jsx/issues"
+  },
+  "homepage": "https://github.com/yuemenglong/jade-jsx#readme"
 }
