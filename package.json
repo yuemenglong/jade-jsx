@@ -9,8 +9,6 @@
   "author": "yuemenglong@126.com",
   "license": "ISC",
   "dependencies": {
-    "babel-core": "^6.7.7",
-    "babel-plugin-transform-react-jsx": "^6.8.0",
     "escodegen": "^1.8.0",
     "esprima": "^2.7.2",
     "estraverse": "^4.2.0",

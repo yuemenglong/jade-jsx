@@ -1,5 +1,4 @@
-var trans = require("..");
-var jadeToJs = trans.jadeToJs;
+var jadeToJsx = require("..");
 
 describe('jadeToJs', function() {
     it('Basic', function(done) {
@@ -10,12 +9,12 @@ describe('jadeToJs', function() {
             })
         }).and(function(){
             ["c","d"].map(function(item){
-                return html('div(id="1" key="2") {item}')
+                return html('div(id="1" key="2") {item}');
             })
         })
         `;
-        var js = jadeToJs(src);
-        console.log(js);
+        var jsx = jadeToJsx(src);
+        console.log(jsx);
         done();
     })
 });
