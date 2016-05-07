@@ -1,6 +1,6 @@
 {
   "name": "jade-jsx",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "use jade grammar to write jsx",
   "main": "index.js",
   "scripts": {
@@ -34,5 +34,8 @@
   "bugs": {
     "url": "https://github.com/yuemenglong/jade-jsx/issues"
   },
-  "homepage": "https://github.com/yuemenglong/jade-jsx#readme"
+  "homepage": "https://github.com/yuemenglong/jade-jsx#readme",
+  "bin": {
+    "jade-jsx": "jade-jsx.js"
+  }
 }
