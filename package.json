@@ -4,7 +4,7 @@
   "description": "use jade grammar to write jsx",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test"
   },
   "author": "yuemenglong@126.com",
   "license": "ISC",
@@ -13,7 +13,9 @@
     "esprima": "^2.7.2",
     "estraverse": "^4.2.0",
     "lodash": "^4.11.2",
-    "pug": "^0.1.0",
+    "pug-code-gen": "0.0.7",
+    "pug-parser": "^1.0.0",
+    "pug-walk": "0.0.3",
     "yy-pug-lexer": "^1.0.1"
   },
   "devDependencies": {

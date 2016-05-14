@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 var jadeToJsx = require("..");
 var fs = require("fs");
 
