@@ -1,6 +1,6 @@
 {
   "name": "jade-jsx",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "use jade grammar to write jsx",
   "main": "index.js",
   "scripts": {
