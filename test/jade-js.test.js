@@ -43,4 +43,28 @@ describe('jadeToJs', function() {
         console.log(js);
         done();
     })
+    it('Recursive', function(done) {
+        var src = `
+        jade("div #{} #{}", 
+        function(){
+            [0, 0].map(function(item){
+                return jade("div {item}");
+            })
+        }, 
+        function(){
+            [[1,2],[3,4]].map(function(pair){
+                return jade("div", function(){
+                    pair.map(function(item){
+                        return jade("div {item}");
+                    })
+                })
+            })
+        });
+        `;
+        var jsx = jadeToJsx(src);
+        console.log(jsx);
+        var js = jsxToJs(jsx);
+        console.log(js);
+        done();
+    })
 });
