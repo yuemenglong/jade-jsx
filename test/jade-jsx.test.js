@@ -80,4 +80,14 @@ describe('jadeToJsx', function() {
         console.log(js);
         done();
     })
+    it('Use Jade As Arg', function(done) {
+        var src = `
+        jade("div", jade("div 1")); 
+        `;
+        var jsx = jadeToJsx(src);
+        console.log(jsx);
+        var js = jsxToJs(jsx);
+        console.log(js);
+        done();
+    })
 });
