@@ -10,15 +10,15 @@ function jsxToJs(src) {
 
 module.exports = jsxToJs;
 
-describe('jadeToJs', function() {
+describe('jadeToJsx', function() {
     it('Basic', function(done) {
         var src = `
         jade("div({...props}, a={prop.a}) #{}#{}", function(){
-            ["a", "b"].map(function(item){
+            return ["a", "b"].map(function(item){
                 return jade('div(key={item}) {item}');
             })
         },function(){
-            ["c","d"].map(function(item){
+            return ["c","d"].map(function(item){
                 return jade('div(id="1" key="2") {item}');
             })
         });
@@ -32,7 +32,7 @@ describe('jadeToJs', function() {
     it('Default', function(done) {
         var src = `
         jade("div(a={prop.a})", function(){
-            ["a", "b"].map(function(item){
+            return ["a", "b"].map(function(item){
                 return jade('div(key={item}) {item}');
             })
         });
@@ -47,19 +47,32 @@ describe('jadeToJs', function() {
         var src = `
         jade("div #{} #{}", 
         function(){
-            [0, 0].map(function(item){
+            return [0, 0].map(function(item){
                 return jade("div {item}");
             })
         }, 
         function(){
-            [[1,2],[3,4]].map(function(pair){
+            return [[1,2],[3,4]].map(function(pair){
                 return jade("div", function(){
-                    pair.map(function(item){
+                    return pair.map(function(item){
                         return jade("div {item}");
                     })
                 })
             })
         });
+        `;
+        var jsx = jadeToJsx(src);
+        console.log(jsx);
+        var js = jsxToJs(jsx);
+        console.log(js);
+        done();
+    })
+    it('Function Call', function(done) {
+        var src = `
+        function render(value){
+            return jade("div {value}");
+        }
+        jade("div", render(1)); 
         `;
         var jsx = jadeToJsx(src);
         console.log(jsx);
