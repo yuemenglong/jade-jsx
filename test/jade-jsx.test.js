@@ -90,4 +90,26 @@ describe('jadeToJsx', function() {
         console.log(js);
         done();
     })
+    it('Use Identifier In Jade', function(done) {
+        var src = `
+        var tpl = 'div(id="1")';
+        jade(tpl);
+        `;
+        var jsx = jadeToJsx(src);
+        console.log(jsx);
+        var js = jsxToJs(jsx);
+        console.log(js);
+        done();
+    })
+    it('Use File In Jade', function(done) {
+        var src = `
+        var tpl = './test.jade';
+        jade(tpl);
+        `;
+        var jsx = jadeToJsx(src, "jade", __dirname);
+        console.log(jsx);
+        var js = jsxToJs(jsx);
+        console.log(js);
+        done();
+    })
 });

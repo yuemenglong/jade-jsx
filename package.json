@@ -12,7 +12,7 @@
     "escodegen": "^1.8.0",
     "esprima": "^2.7.2",
     "estraverse": "^4.2.0",
-    "lodash": "^4.11.2",
+    "lodash": "^4.13.1",
     "pug-code-gen": "0.0.7",
     "pug-parser": "^1.0.0",
     "pug-walk": "0.0.3",
