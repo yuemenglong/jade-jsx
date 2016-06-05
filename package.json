@@ -16,7 +16,7 @@
     "pug-code-gen": "0.0.7",
     "pug-parser": "^1.0.0",
     "pug-walk": "0.0.3",
-    "yy-pug-lexer": "^1.0.1"
+    "yy-pug-lexer": "^1.0.3"
   },
   "devDependencies": {
     "babel-core": "^6.8.0",

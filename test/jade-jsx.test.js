@@ -112,4 +112,17 @@ describe('jadeToJsx', function() {
         console.log(js);
         done();
     })
+    it('Use New Line For Child', function(done) {
+        var src = `
+        jade(\`
+        div 
+            #{}
+        \`, function(){return jade("span")});
+        `;
+        var jsx = jadeToJsx(src, "jade", __dirname);
+        console.log(jsx);
+        var js = jsxToJs(jsx);
+        console.log(js);
+        done();
+    })
 });
